@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Links to every European country's official drone (UAS geographical zones) map, for FPV and drone pilots.">
+<style>html,body{margin:0}</style>
+<title>European Drone Maps</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-width chart sheet. A graticule header with a large high-contrast serif title, three hairline-divided key facts, then a ruled index of countries. Midnight ink, ivory type, one brass accent. */
+:root {
+  --bg: #0a1120;
+  --surface: #0f1829;
+  --fg: #ebe7dc;
+  --muted: #8b97ab;
+  --line: #222d45;
+  --accent: #c9a96e;
+  --accent-fg: #0a1120;
+  --grid: rgba(201, 169, 110, 0.07);
+  --gutter: clamp(20px, 4vw, 64px);
+  --font-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, "Times New Roman", serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-label: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef0f2;
+    --surface: #f8f9fa;
+    --fg: #0f1a2e;
+    --muted: #596478;
+    --line: #cdd3dc;
+    --accent: #7a5c20;
+    --accent-fg: #ffffff;
+    --grid: rgba(15, 26, 46, 0.06);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #eef0f2;
+  --surface: #f8f9fa;
+  --fg: #0f1a2e;
+  --muted: #596478;
+  --line: #cdd3dc;
+  --accent: #7a5c20;
+  --accent-fg: #ffffff;
+  --grid: rgba(15, 26, 46, 0.06);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-block: 0 64px;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+.wrap { width: 100%; display: flex; flex-direction: column; gap: 56px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.label { font-family: var(--font-label); font-weight: 600; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+
+/* Header with graticule */
+header { position: relative; padding-block: 56px 48px; display: flex; flex-direction: column; gap: 22px; }
+header::before {
+  content: ""; position: absolute; inset: 0 calc(var(--gutter) * -1); z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+}
+header > * { position: relative; z-index: 1; }
+h1 {
+  font-family: var(--font-display); font-weight: 400; margin: 0;
+  font-size: clamp(2.8rem, 9vw, 6.5rem); line-height: 0.98; letter-spacing: -0.01em; text-wrap: balance;
+}
+.lede { margin: 0; max-width: 60ch; color: var(--muted); font-size: 1.1rem; }
+
+/* Key facts */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.fact { padding: 28px 28px 28px 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fact + .fact { padding-left: 28px; border-left: 1px solid var(--line); }
+.fact b { font-family: var(--font-display); font-weight: 400; font-size: 2.6rem; line-height: 1; letter-spacing: -0.01em; }
+.fact b small { font-family: var(--font-label); font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-left: 6px; }
+.fact span { color: var(--muted); font-size: 0.95rem; max-width: 36ch; }
+
+/* Controls */
+.tools { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
+.search { flex: 1 1 280px; max-width: 460px; min-width: 0; }
+.search label { display: block; margin-bottom: 4px; }
+.search input {
+  width: 100%; font: inherit; font-size: 1.1rem; color: var(--fg); background: transparent;
+  border: 0; border-bottom: 1px solid var(--muted); border-radius: 0; padding: 8px 0;
+}
+.search input:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 var(--accent); }
+.search input::placeholder { color: var(--muted); }
+.toggle { display: inline-flex; gap: 10px; align-items: center; cursor: pointer; padding-bottom: 8px; color: var(--muted); }
+.toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+.count { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin: 18px 0 0; letter-spacing: 0.02em; }
+
+/* Index */
+.head, li.row {
+  display: grid; grid-template-columns: 64px minmax(0, 1.1fr) minmax(0, 1.5fr) 140px 132px;
+  gap: 6px 28px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line);
+}
+.head { padding: 12px 0; margin-top: 8px; border-bottom-color: var(--fg); font-family: var(--font-label); font-weight: 600; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+ul.list { list-style: none; margin: 0; padding: 0; }
+.code { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; color: var(--accent); }
+.country { font-family: var(--font-display); font-size: 1.7rem; line-height: 1.1; letter-spacing: -0.005em; min-width: 0; }
+.map { min-width: 0; }
+.map b { display: block; font-weight: 500; }
+.map span { display: block; font-family: var(--font-mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.status { display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-label); font-weight: 600; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.status::before { content: ""; width: 8px; height: 8px; border: 1px solid var(--muted); transform: rotate(45deg); flex: none; }
+.status.ok { color: var(--accent); }
+.status.ok::before { background: var(--accent); border-color: var(--accent); }
+a.open {
+  font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; white-space: nowrap;
+  color: var(--accent); border: 1px solid var(--accent); padding: 9px 18px; display: inline-block; justify-self: end;
+  transition: background-color 0.15s, color 0.15s;
+}
+a.open:hover { background: var(--accent); color: var(--accent-fg); }
+.empty { padding: 32px 0; color: var(--muted); }
+
+/* Notes */
+.notes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 16px 56px; padding-top: 32px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.95rem; }
+.notes div { display: grid; gap: 12px; align-content: start; max-width: 72ch; }
+.notes p { margin: 0; }
+.notes a { color: var(--accent); }
+
+@media (max-width: 800px) {
+  .fact, .fact + .fact { padding: 20px 0; border-left: 0; }
+  .fact + .fact { border-top: 1px solid var(--line); }
+  .notes { grid-template-columns: minmax(0, 1fr); }
+  .head { display: none; }
+  li.row { grid-template-columns: 48px minmax(0, 1fr); padding: 20px 0; }
+  li.row .map, li.row .status, li.row a.open { grid-column: 2; justify-self: start; }
+  li.row a.open { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="label">Pre-flight reference</div>
+    <h1>European Drone Maps</h1>
+    <p class="lede">Each country's aviation authority publishes its own map of UAS geographical zones. This page links to every one of them. Nothing is copied, so each map opens at its official source and is always current.</p>
+  </header>
+
+  <section class="facts" aria-label="Before you fly">
+    <div class="fact"><b>120<small>m</small></b><span>Maximum height. Some zones set a lower limit, shown on the map.</span></div>
+    <div class="fact"><b>1<small>registration</small></b><span>Your operator number and pilot certificate are valid in other EASA countries.</span></div>
+    <div class="fact"><b>Local<small>rules</small></b><span>A clear map does not mean you may fly there. National and local rules can still apply.</span></div>
+  </section>
+
+  <section>
+    <div class="tools">
+      <div class="search">
+        <label for="q" class="label">Find a country</label>
+        <input id="q" type="search" autocomplete="off" placeholder="Latvia, FI, Sweden">
+      </div>
+      <label class="toggle" for="onlyOk"><input id="onlyOk" type="checkbox"> <span>Verified sources only</span></label>
+    </div>
+    <p class="count" id="count"></p>
+    <div class="head" aria-hidden="true"><span>Code</span><span>Country</span><span>Map</span><span>Source</span><span></span></div>
+    <ul class="list" id="list"></ul>
+  </section>
+
+  <section class="notes">
+    <div class="label">About the sources</div>
+    <div>
+      <p>Verified means the link comes from the country's own official body: its aviation authority, air navigation provider or transport ministry. Unverified means it comes from a third-party list and no official confirmation was found. An unverified map may well be correct. Open it with care and check the country's official page through EASA's list of national aviation authorities.</p>
+      <p>Iceland has no online map. Last checked 2 November 2026. Rules differ by country and this page does not replace official information.</p>
+      <p>Sources: <a href="https://www.easa.europa.eu/en/node/143066" target="_blank" rel="noopener">EASA</a>, <a href="https://www.transpordiamet.ee/en/drones" target="_blank" rel="noopener">Estonian Transport Administration</a>, <a href="https://www.dronelicense.eu/blogs/popular/drone-maps-of-europe" target="_blank" rel="noopener">Drone License (third-party list)</a>.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  // [code, country, map name, url, verified from the national authority's own page]
+  var C = [
+    ["EE", "Estonia", "Estonian Drone Map (EANS)", "https://aim.eans.ee/droonikaart/", true],
+    ["LV", "Latvia", "eUARV (LGS)", "https://www.airspace.lv/drones", true],
+    ["LT", "Lithuania", "Lithuania Drone Map (UTM)", "https://utm.ans.lt/", true],
+    ["FI", "Finland", "Droneinfo (Traficom)", "https://traficom.fi/en/where-flying-prohibited", true],
+    ["SE", "Sweden", "LFV Dronechart", "https://dronechart.lfv.se/", true],
+    ["DE", "Germany", "dipul (DFS)", "https://www.dipul.de", true],
+    ["AT", "Austria", "Dronespace", "https://utm.dronespace.at/avm/#p=5/47.74/13.23", false],
+    ["BE", "Belgium", "Droneguide", "https://map.droneguide.be/", false],
+    ["BG", "Bulgaria", "Interactive drone map", "https://www.caa.bg/bg/category/633/7062", false],
+    ["HR", "Croatia", "AMC Portal", "https://amc-en.crocontrol.hr/Current-situation-anonymous-users", false],
+    ["CY", "Cyprus", "Geo-zones map (DCA)", "https://drones.gov.cy/geo-zones-map/", false],
+    ["CZ", "Czechia", "Drone Map", "https://dronemap.gov.cz/index.php?lang=2", false],
+    ["DK", "Denmark", "Dronezoner", "https://droneregler.dk/dronezoner", false],
+    ["FR", "France", "Cartes gouv.fr", "https://cartes.gouv.fr/explorer-les-cartes/", false],
+    ["GR", "Greece", "Drone Aware", "https://dagr.hasp.gov.gr/#map_page", false],
+    ["HU", "Hungary", "HungaroControl", "https://ais.hungarocontrol.hu/legterfelhasznalasi-terv", false],
+    ["IE", "Ireland", "IAA UAS geographic zones", "https://www.iaa.ie/general-aviation/drones/uas-geographic-zones", false],
+    ["IT", "Italy", "D-flight", "https://www.d-flight.it/web-app/", false],
+    ["LU", "Luxembourg", "Geoportal", "https://map.geoportail.lu/", false],
+    ["MT", "Malta", "TM-CAD", "https://tmcad.idronect.com/users/sign-in", false],
+    ["NL", "Netherlands", "GoDrone", "https://map.godrone.nl/", false],
+    ["NO", "Norway", "Safetofly", "https://www.safetofly.no/", false],
+    ["PL", "Poland", "DroneMap PANSA", "https://dronemap.pansa.pl/", false],
+    ["PT", "Portugal", "ANAC", "https://dnt.anac.pt/mapa.html", false],
+    ["RO", "Romania", "UAS geographical zones", "https://flightplan.romatsa.ro/init/drones", false],
+    ["SK", "Slovakia", "AIS charts", "https://gis.lps.sk/vfrm/index.html", false],
+    ["SI", "Slovenia", "UAS Geo Zones", "https://caa-slovenia.maps.arcgis.com/apps/webappviewer/index.html?id=25ba69037c264c5faa5381174f76f861", false],
+    ["ES", "Spain", "ENAIRE drones", "https://drones.enaire.es/", false],
+    ["CH", "Switzerland", "Skyguide", "https://app.swissuspace.ch/", false]
+  ];
+
+  var list = document.getElementById("list");
+  var count = document.getElementById("count");
+  var q = document.getElementById("q");
+  var onlyOk = document.getElementById("onlyOk");
+
+  function host(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
+  function norm(s) { return s.toLowerCase(); }
+
+  function render() {
+    var term = norm(q.value.trim());
+    var rows = C.filter(function (c) {
+      if (onlyOk.checked && !c[4]) return false;
+      if (!term) return true;
+      return norm(c[0]).indexOf(term) > -1 || norm(c[1]).indexOf(term) > -1 || norm(c[2]).indexOf(term) > -1;
+    });
+    list.textContent = "";
+    rows.forEach(function (c) {
+      var li = document.createElement("li");
+      li.className = "row";
+      var code = document.createElement("div"); code.className = "code"; code.textContent = c[0];
+      var country = document.createElement("div"); country.className = "country"; country.textContent = c[1];
+      var map = document.createElement("div"); map.className = "map";
+      var b = document.createElement("b"); b.textContent = c[2];
+      var h = document.createElement("span"); h.textContent = host(c[3]);
+      map.appendChild(b); map.appendChild(h);
+      var st = document.createElement("div"); st.className = "status" + (c[4] ? " ok" : ""); st.textContent = c[4] ? "Verified" : "Unverified";
+      var a = document.createElement("a"); a.className = "open"; a.href = c[3]; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = "Open map";
+      a.setAttribute("aria-label", "Open the " + c[1] + " drone map");
+      li.appendChild(code); li.appendChild(country); li.appendChild(map); li.appendChild(st); li.appendChild(a);
+      list.appendChild(li);
+    });
+    if (!rows.length) {
+      var e = document.createElement("li"); e.className = "empty"; e.textContent = "No such country in the list. Try the English name or the two-letter code.";
+      list.appendChild(e);
+    }
+    var ok = C.filter(function (c) { return c[4]; }).length;
+    count.textContent = rows.length + " countries shown · " + ok + " verified, " + (C.length - ok) + " unverified";
+  }
+
+  q.addEventListener("input", render);
+  onlyOk.addEventListener("change", render);
+  render();
+})();
+</script>
